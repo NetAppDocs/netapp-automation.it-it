@@ -1,0 +1,109 @@
+---
+sidebar: sidebar 
+permalink: solutions/ontap-day01-overview.html 
+keywords: bluexp automation catalog, netapp automation solutions, ontap day 0/1, overview, introduction 
+summary: Puoi utilizzare la soluzione di automazione ONTAP Day 0/1 per implementare e configurare un cluster ONTAP utilizzando Ansible. 
+---
+= Panoramica della soluzione ONTAP Day 0/1
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Puoi utilizzare la soluzione di automazione ONTAP Day 0/1 per implementare e configurare un cluster ONTAP utilizzando Ansible. La soluzione è disponibile nella link:https://console.bluexp.netapp.com/automationCatalog["Catalogo di automazione BlueXP"^].
+
+
+
+== Opzioni flessibili di implementazione ONTAP
+
+A seconda dei tuoi requisiti, puoi utilizzare l'hardware on-premise o simulare ONTAP per implementare e configurare un cluster ONTAP utilizzando Ansible.
+
+.Hardware on-premise
+Puoi implementare questa soluzione utilizzando hardware on-premise che esegue ONTAP, come un FAS o un sistema AFF. Devi utilizzare una macchina virtuale Linux per implementare e configurare il cluster ONTAP utilizzando Ansible.
+
+.Simula ONTAP
+Per implementare questa soluzione utilizzando un simulatore ONTAP, è necessario scaricare la versione più recente di simulate ONTAP dal sito di supporto NetApp. Simulate ONTAP è un simulatore virtuale per il software ONTAP. Simulate ONTAP viene eseguito in un hypervisor VMware su un sistema Windows, Linux o Mac. Per gli host Windows e Linux, è necessario utilizzare l'hypervisor VMware Workstation per eseguire questa soluzione. Se si dispone di un sistema operativo Mac, utilizzare l'hypervisor VMware Fusion.
+
+
+
+== Design a più strati
+
+Il framework Ansible semplifica lo sviluppo e il riutilizzo dei task logici e dell'esecuzione dell'automazione. Il framework distingue tra le attività decisionali (livello logico) e le fasi di esecuzione (livello di esecuzione) nell'automazione. La comprensione del funzionamento di questi livelli consente di personalizzare la configurazione.
+
+Un "playbook" Ansible esegue una serie di task dall'inizio alla fine. La `site.yml` guida contiene la `logic.yml` guida e la `execution.yml` guida.
+
+Quando viene eseguita una richiesta, il `site.yml` playbook viene chiamato per primo il `logic.yml` playbook, quindi chiama il `execution.yml` playbook per eseguire la richiesta di servizio.
+
+Non è necessario utilizzare il livello logico del framework. Il livello logico fornisce opzioni per espandere la capacità del framework oltre i valori hard-coded per l'esecuzione. Ciò consente di personalizzare le funzionalità del framework, se necessario.
+
+.Livello logico
+Il livello logico è costituito dai seguenti elementi:
+
+*  `logic.yml`Il manuale
+* File di operazioni logiche all'interno della `logic-tasks` directory
+
+
+Il livello logico offre la possibilità di prendere decisioni complesse senza la necessità di una significativa integrazione personalizzata (ad esempio, la connessione a ServiceNOW). Il livello logico è configurabile e fornisce l'ingresso ai microservizi.
+
+È inoltre prevista la capacità di bypassare il livello logico. Se si desidera ignorare il livello logico, non definire la `logic_operation` variabile. La invocazione diretta del `logic.yml` playbook offre la possibilità di effettuare qualche livello di debug senza esecuzione. È possibile utilizzare un'istruzione "debug" per verificare che il valore di `raw_service_request` sia corretto.
+
+Considerazioni importanti:
+
+* Il `logic.yml` playbook ricerca la `logic_operation` variabile. Se la variabile è definita nella richiesta, carica un file di attività dalla `logic-tasks` directory. Il file di attività deve essere un file .yml. Se non esiste un file di attività corrispondente e la `logic_operation` variabile è definita, il livello logico non riesce.
+* Il valore predefinito della `logic_operation` variabile è `no-op`. Se la variabile non è definita in modo esplicito, per impostazione predefinita è `no-op`, che non esegue alcuna operazione.
+* Se la `raw_service_request` variabile è già definita, l'esecuzione procede al livello di esecuzione. Se la variabile non è definita, il livello logico non riesce.
+
+
+.Livello di esecuzione
+Il livello di esecuzione è costituito dai seguenti elementi:
+
+*  `execution.yml`Il manuale
+
+
+Il livello di esecuzione effettua le chiamate API per configurare un cluster ONTAP. Il `execution.yml` playbook richiede che la `raw_service_request` variabile sia definita al momento dell'esecuzione.
+
+
+
+== Supporto per la personalizzazione
+
+È possibile personalizzare questa soluzione in vari modi a seconda delle proprie esigenze.
+
+Le opzioni di personalizzazione includono:
+
+* Modifica dei playbook Ansible
+* Aggiunta di ruoli
+
+
+.Personalizza i file Ansible
+La tabella seguente descrive i file Ansible personalizzabili contenuti in questa soluzione.
+
+[cols="25,75"]
+|===
+| Posizione | Descrizione 
+
+
+ a| 
+`playbooks/inventory/hosts`
+| Contiene un singolo file con un elenco di host e gruppi. 
+
+
+ a| 
+`playbooks/group_vars/all/*`
+| Ansible fornisce un modo pratico per applicare le variabili a più host contemporaneamente. È possibile modificare uno o tutti i file contenuti in questa cartella, inclusi `cfg.yml` `clusters.yml` , `defaults.yml`, `services.yml`, `standards.yml` e `vault.yml`. 
+
+
+ a| 
+`playbooks/logic-tasks`
+| Supporta le attività decisionali all'interno di Ansible e mantiene la separazione di logica ed esecuzione. È possibile aggiungere file a questa cartella che corrispondono al servizio pertinente. 
+
+
+ a| 
+`playbooks/vars/*`
+| Valori dinamici utilizzati nei playbook e nei ruoli Ansible per consentire la personalizzazione, la flessibilità e la riutilizzabilità delle configurazioni. Se necessario, è possibile modificare uno o tutti i file contenuti in questa cartella. 
+|===
+.Personalizzare i ruoli
+Puoi anche personalizzare la soluzione aggiungendo o cambiando ruoli Ansible, anche chiamati microservizi. Per ulteriori informazioni, vedere link:ontap-day01-customize.html["Personalizza"].

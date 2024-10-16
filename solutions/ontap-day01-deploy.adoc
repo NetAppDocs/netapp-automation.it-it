@@ -1,0 +1,844 @@
+---
+sidebar: sidebar 
+permalink: solutions/ontap-day01-deploy.html 
+keywords: bluexp automation catalog, netapp automation solutions, ontap day 0/1, deploy 
+summary: Dopo aver completato la preparazione e il planning, sei pronto a utilizzare la soluzione ONTAP Day 0/1 per configurare rapidamente un cluster ONTAP utilizzando Ansible. 
+---
+= Implementare il cluster ONTAP utilizzando la soluzione
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Dopo aver completato la preparazione e il planning, sei pronto a utilizzare la soluzione ONTAP Day 0/1 per configurare rapidamente un cluster ONTAP utilizzando Ansible.
+
+In qualsiasi momento durante le fasi di questa sezione, è possibile scegliere di testare una richiesta invece di eseguirla. Per testare una richiesta, modificare il `site.yml` playbook sulla riga di comando in `logic.yml`.
+
+
+NOTE: La `docs/tutorial-requests.txt` posizione contiene la versione finale di tutte le richieste di servizio utilizzate durante questa procedura. In caso di difficoltà nell'esecuzione di una richiesta di servizio, è possibile copiare la richiesta pertinente dal `tutorial-requests.txt` file nella `playbooks/inventory/group_vars/all/tutorial-requests.yml` posizione e modificare i valori codificati come richiesto (indirizzo IP, nomi aggregati e così via). A questo punto, è possibile eseguire correttamente la richiesta.
+
+
+
+== Prima di iniziare
+
+* È necessario che Ansible sia installato.
+* È necessario aver scaricato la soluzione ONTAP Day 0/1 ed estratto la cartella nella posizione desiderata sul nodo di controllo Ansible.
+* Lo stato del sistema ONTAP deve soddisfare i requisiti e l'utente deve disporre delle credenziali necessarie.
+* È necessario aver completato tutte le attività richieste indicate nella link:ontap-day01-prepare.html["Preparatevi"]sezione .
+
+
+
+NOTE: Negli esempi di questa soluzione vengono utilizzati "Cluster_01" e "Cluster_02" come nomi per i due cluster. È necessario sostituire questi valori con i nomi dei cluster nel proprio ambiente.
+
+
+
+== Fase 1: Configurazione iniziale del cluster
+
+A questo punto, è necessario eseguire alcune operazioni iniziali di configurazione del cluster.
+
+.Fasi
+. Individuare la `playbooks/inventory/group_vars/all/tutorial-requests.yml` posizione e rivedere la `cluster_initial` richiesta nel file. Apportare le modifiche necessarie al proprio ambiente.
+. Creare un file nella `logic-tasks` cartella per la richiesta di servizio. Ad esempio, creare un file denominato `cluster_initial.yml`.
++
+Copiare le seguenti righe nel nuovo file:
+
++
+[source, cli]
+----
+- name: Validate required inputs
+  ansible.builtin.assert:
+    that:
+    - service is defined
+
+- name: Include data files
+  ansible.builtin.include_vars:
+    file:   "{{ data_file_name }}.yml"
+  loop:
+  - common-site-stds
+  - user-inputs
+  - cluster-platform-stds
+  - vserver-common-stds
+  loop_control:
+    loop_var:    data_file_name
+
+- name: Initial cluster configuration
+  set_fact:
+    raw_service_request:
+----
+. Definire la `raw_service_request` variabile.
++
+È possibile utilizzare una delle seguenti opzioni per definire la `raw_service_request` variabile nel `cluster_initial.yml` file creato nella `logic-tasks` cartella:
+
++
+** *Opzione 1*: Definire manualmente la `raw_service_request` variabile.
++
+Aprire il `tutorial-requests.yml` file utilizzando un editor e copiare il contenuto dalla riga 11 alla riga 165. Incollare il contenuto sotto la `raw service request` variabile nel nuovo `cluster_initial.yml` file, come illustrato negli esempi seguenti:
+
++
+image::../media/cluster_initial_line.png[Immagine della riga del file da cui copiare]
+
++
+.Mostra esempio
+[%collapsible]
+====
+File di esempio `cluster_initial.yml`:
+
+[listing]
+----
+- name: Validate required inputs
+  ansible.builtin.assert:
+    that:
+    - service is defined
+
+- name: Include data files
+  ansible.builtin.include_vars:
+    file:   "{{ data_file_name }}.yml"
+  loop:
+  - common-site-stds
+  - user-inputs
+  - cluster-platform-stds
+  - vserver-common-stds
+  loop_control:
+    loop_var:    data_file_name
+
+- name: Initial cluster configuration
+  set_fact:
+    raw_service_request:
+     service:          cluster_initial
+     operation:         create
+     std_name:           none
+     req_details:
+
+      ontap_aggr:
+      - hostname:                   "{{ cluster_name }}"
+        disk_count:                 24
+        name:                       n01_aggr1
+        nodes:                      "{{ cluster_name }}-01"
+        raid_type:                  raid4
+
+      - hostname:                   "{{ peer_cluster_name }}"
+        disk_count:                 24
+        name:                       n01_aggr1
+        nodes:                      "{{ peer_cluster_name }}-01"
+        raid_type:                  raid4
+
+      ontap_license:
+      - hostname:                   "{{ cluster_name }}"
+        license_codes:
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+
+    - hostname:                   "{{ peer_cluster_name }}"
+      license_codes:
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+        - XXXXXXXXXXXXXXAAAAAAAAAAAAAA
+
+    ontap_motd:
+    - hostname:                   "{{ cluster_name }}"
+      vserver:                    "{{ cluster_name }}"
+      message:                    "New MOTD"
+
+    - hostname:                   "{{ peer_cluster_name }}"
+      vserver:                    "{{ peer_cluster_name }}"
+      message:                    "New MOTD"
+
+    ontap_interface:
+    - hostname:                   "{{ cluster_name }}"
+      vserver:                    "{{ cluster_name }}"
+      interface_name:             ic01
+      role:                       intercluster
+      address:                    10.0.0.101
+      netmask:                    255.255.255.0
+      home_node:                  "{{ cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+
+    - hostname:                   "{{ cluster_name }}"
+      vserver:                    "{{ cluster_name }}"
+      interface_name:             ic02
+      role:                       intercluster
+      address:                    10.0.0.101
+      netmask:                    255.255.255.0
+      home_node:                  "{{ cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+
+    - hostname:                   "{{ peer_cluster_name }}"
+      vserver:                    "{{ peer_cluster_name }}"
+      interface_name:             ic01
+      role:                       intercluster
+      address:                    10.0.0.101
+      netmask:                    255.255.255.0
+      home_node:                  "{{ peer_cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+
+    - hostname:                   "{{ peer_cluster_name }}"
+      vserver:                    "{{ peer_cluster_name }}"
+      interface_name:             ic02
+      role:                       intercluster
+      address:                    10.0.0.101
+      netmask:                    255.255.255.0
+      home_node:                  "{{ peer_cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+
+    ontap_cluster_peer:
+    - hostname:                   "{{ cluster_name }}"
+      dest_cluster_name:          "{{ peer_cluster_name }}"
+      dest_intercluster_lifs:     "{{ peer_lifs }}"
+      source_cluster_name:        "{{ cluster_name }}"
+      source_intercluster_lifs:   "{{ cluster_lifs }}"
+      peer_options:
+        hostname:                 "{{ peer_cluster_name }}"
+
+----
+====
+** *Opzione 2*: Utilizzare un modello Jinja per definire la richiesta:
++
+È anche possibile utilizzare il seguente formato di modello Jinja per ottenere il `raw_service_request` valore.
+
++
+`raw_service_request:      "{{ cluster_initial }}"`
+
+
+
+. Eseguire la configurazione iniziale del cluster per il primo cluster:
++
+[source, cli]
+----
+ansible-playbook -i inventory/hosts site.yml -e cluster_name=<Cluster_01>
+----
++
+Prima di procedere, verificare che non vi siano errori.
+
+. Ripetere il comando per il secondo cluster:
++
+[source, cli]
+----
+ansible-playbook -i inventory/hosts site.yml -e cluster_name=<Cluster_02>
+----
++
+Verificare che non siano presenti errori per il secondo cluster.
+
++
+Quando scorri verso l'alto verso l'inizio dell'output Ansible dovresti vedere la richiesta inviata al framework, come mostrato nel seguente esempio:
+
++
+.Mostra esempio
+[%collapsible]
+====
+[listing]
+----
+TASK [Show the raw_service_request] ************************************************************************************************************
+ok: [localhost] => {
+    "raw_service_request": {
+        "operation": "create",
+        "req_details": {
+            "ontap_aggr": [
+                {
+                    "disk_count": 24,
+                    "hostname": "Cluster_01",
+                    "name": "n01_aggr1",
+                    "nodes": "Cluster_01-01",
+                    "raid_type": "raid4"
+                }
+            ],
+            "ontap_license": [
+                {
+                    "hostname": "Cluster_01",
+                    "license_codes": [
+                        "XXXXXXXXXXXXXXXAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA",
+                        "XXXXXXXXXXXXXXAAAAAAAAAAAAA"
+                    ]
+                }
+            ],
+            "ontap_motd": [
+                {
+                    "hostname": "Cluster_01",
+                    "message": "New MOTD",
+                    "vserver": "Cluster_01"
+                }
+            ]
+        },
+        "service": "cluster_initial",
+        "std_name": "none"
+    }
+}
+----
+====
+. Accedere a ciascuna istanza di ONTAP e verificare che la richiesta sia stata eseguita correttamente.
+
+
+
+
+== Fase 2: Configurare intercluster LIF
+
+Ora puoi configurare i LIF intercluster LIF aggiungendo le definizioni LIF alla `cluster_initial` richiesta e definendo il `ontap_interface` microservizio.
+
+La definizione del servizio e la richiesta lavorano insieme per determinare l'azione:
+
+* Se si fornisce una richiesta di servizio per un microservizio che non è presente nelle definizioni di servizio, la richiesta non viene eseguita.
+* Se si fornisce una richiesta di servizio con uno o più microservizi definiti nelle definizioni di servizio, ma omessi dalla richiesta, la richiesta non viene eseguita.
+
+
+Il `execution.yml` playbook valuta la definizione del servizio analizzando l'elenco dei microservizi nell'ordine elencato:
+
+* Se nella richiesta è presente una voce con una chiave dizionario corrispondente alla `args` voce contenuta nelle definizioni di microservizi, la richiesta viene eseguita.
+* Se nella richiesta di servizio non è presente alcuna voce corrispondente, la richiesta viene ignorata senza errori.
+
+
+.Fasi
+. Passare al `cluster_initial.yml` file creato in precedenza e modificare la richiesta aggiungendo le seguenti righe alle definizioni della richiesta:
++
+[source, cli]
+----
+    ontap_interface:
+    - hostname:                   "{{ cluster_name }}"
+      vserver:                    "{{ cluster_name }}"
+      interface_name:             ic01
+      role:                       intercluster
+      address:                    <ip_address>
+      netmask:                    <netmask_address>
+      home_node:                  "{{ cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+
+    - hostname:                   "{{ cluster_name }}"
+      vserver:                    "{{ cluster_name }}"
+      interface_name:             ic02
+      role:                       intercluster
+      address:                    <ip_address>
+      netmask:                    <netmask_address>
+      home_node:                  "{{ cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+
+    - hostname:                   "{{ peer_cluster_name }}"
+      vserver:                    "{{ peer_cluster_name }}"
+      interface_name:             ic01
+      role:                       intercluster
+      address:                    <ip_address>
+      netmask:                    <netmask_address>
+      home_node:                  "{{ peer_cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+
+    - hostname:                   "{{ peer_cluster_name }}"
+      vserver:                    "{{ peer_cluster_name }}"
+      interface_name:             ic02
+      role:                       intercluster
+      address:                    <ip_address>
+      netmask:                    <netmask_address>
+      home_node:                  "{{ peer_cluster_name }}-01"
+      home_port:                  e0c
+      ipspace:                    Default
+      use_rest:                   never
+----
+. Eseguire il comando:
++
+[source, cli]
+----
+ansible-playbook -i inventory/hosts  site.yml -e cluster_name=<Cluster_01> -e peer_cluster_name=<Cluster_02>
+----
+. Effettua l'accesso a ciascuna istanza per verificare se le LIF sono state aggiunte al cluster:
++
+.Mostra esempio
+[%collapsible]
+====
+[listing]
+----
+Cluster_01::> net int show
+  (network interface show)
+            Logical    Status     Network            Current       Current Is
+Vserver     Interface  Admin/Oper Address/Mask       Node          Port    Home
+----------- ---------- ---------- ------------------ ------------- ------- ----
+Cluster_01
+            Cluster_01-01_mgmt up/up 10.0.0.101/24   Cluster_01-01 e0c     true
+            Cluster_01-01_mgmt_auto up/up 10.101.101.101/24 Cluster_01-01 e0c true
+            cluster_mgmt up/up    10.0.0.110/24      Cluster_01-01 e0c     true
+5 entries were displayed.
+----
+====
++
+Il risultato mostra che le LIF sono state *non* aggiunte. Questo perché il `ontap_interface` microservizio deve ancora essere definito nel `services.yml` file.
+
+. Verificare che le LIF siano state aggiunte alla `raw_service_request` variabile.
++
+.Mostra esempio
+[%collapsible]
+====
+Il seguente esempio mostra che le LIF sono state aggiunte alla richiesta:
+
+[listing]
+----
+           "ontap_interface": [
+                {
+                    "address": "10.0.0.101",
+                    "home_node": "Cluster_01-01",
+                    "home_port": "e0c",
+                    "hostname": "Cluster_01",
+                    "interface_name": "ic01",
+                    "ipspace": "Default",
+                    "netmask": "255.255.255.0",
+                    "role": "intercluster",
+                    "use_rest": "never",
+                    "vserver": "Cluster_01"
+                },
+                {
+                    "address": "10.0.0.101",
+                    "home_node": "Cluster_01-01",
+                    "home_port": "e0c",
+                    "hostname": "Cluster_01",
+                    "interface_name": "ic02",
+                    "ipspace": "Default",
+                    "netmask": "255.255.255.0",
+                    "role": "intercluster",
+                    "use_rest": "never",
+                    "vserver": "Cluster_01"
+                },
+                {
+                    "address": "10.0.0.101",
+                    "home_node": "Cluster_02-01",
+                    "home_port": "e0c",
+                    "hostname": "Cluster_02",
+                    "interface_name": "ic01",
+                    "ipspace": "Default",
+                    "netmask": "255.255.255.0",
+                    "role": "intercluster",
+                    "use_rest": "never",
+                    "vserver": "Cluster_02"
+                },
+                {
+                    "address": "10.0.0.126",
+                    "home_node": "Cluster_02-01",
+                    "home_port": "e0c",
+                    "hostname": "Cluster_02",
+                    "interface_name": "ic02",
+                    "ipspace": "Default",
+                    "netmask": "255.255.255.0",
+                    "role": "intercluster",
+                    "use_rest": "never",
+                    "vserver": "Cluster_02"
+                }
+            ],
+----
+====
+. Definire il `ontap_interface` microservizio in `cluster_initial` nel `services.yml` file.
++
+Copiare le seguenti righe nel file per definire il microservizio:
+
++
+[source, cli]
+----
+        - name: ontap_interface
+          args: ontap_interface
+          role: na/ontap_interface
+----
+. Ora che il `ontap_interface` microservizio è stato definito nella richiesta e nel `services.yml` file, eseguire nuovamente la richiesta:
++
+[source, cli]
+----
+ansible-playbook -i inventory/hosts  site.yml -e cluster_name=<Cluster_01> -e peer_cluster_name=<Cluster_02>
+----
+. Accedere a ciascuna istanza di ONTAP e verificare che le LIF siano state aggiunte.
+
+
+
+
+== Fase 3: In alternativa, configurare più cluster
+
+Se necessario, puoi configurare più cluster nella stessa richiesta. Quando si definisce la richiesta, è necessario fornire i nomi delle variabili per ciascun cluster.
+
+.Fasi
+. Aggiungere una voce per il secondo cluster nel `cluster_initial.yml` file per configurare entrambi i cluster nella stessa richiesta.
++
+Nell'esempio seguente viene visualizzato il `ontap_aggr` campo dopo l'aggiunta della seconda voce.
+
++
+[listing]
+----
+   ontap_aggr:
+    - hostname:                   "{{ cluster_name }}"
+      disk_count:                 24
+      name:                       n01_aggr1
+      nodes:                      "{{ cluster_name }}-01"
+      raid_type:                  raid4
+
+    - hostname:                   "{{ peer_cluster_name }}"
+      disk_count:                 24
+      name:                       n01_aggr1
+      nodes:                      "{{ peer_cluster_name }}-01"
+      raid_type:                  raid4
+----
+. Applicare le modifiche per tutti gli altri elementi in `cluster_initial`.
+. Aggiungere il peering dei cluster alla richiesta copiando le seguenti righe nel file:
++
+[source, cli]
+----
+    ontap_cluster_peer:
+    - hostname:                   "{{ cluster_name }}"
+      dest_cluster_name:          "{{ cluster_peer }}"
+      dest_intercluster_lifs:     "{{ peer_lifs }}"
+      source_cluster_name:        "{{ cluster_name }}"
+      source_intercluster_lifs:   "{{ cluster_lifs }}"
+      peer_options:
+        hostname:                 "{{ cluster_peer }}"
+----
+. Eseguire la richiesta Ansible:
++
+[source, cli]
+----
+ansible-playbook -i inventory/hosts -e cluster_name=<Cluster_01>
+site.yml -e peer_cluster_name=<Cluster_02> -e cluster_lifs=<cluster_lif_1_IP_address,cluster_lif_2_IP_address>
+-e peer_lifs=<peer_lif_1_IP_address,peer_lif_2_IP_address>
+----
+
+
+
+
+== Fase 4: Configurazione SVM iniziale
+
+In questa fase della procedura è necessario configurare le SVM nel cluster.
+
+.Fasi
+. Aggiornare la `svm_initial` richiesta nel `tutorial-requests.yml` file per configurare un peer relationship SVM e SVM.
++
+È necessario configurare quanto segue:
+
++
+** SVM
+** La relazione peer della SVM
+** L'interfaccia SVM per ciascuna SVM
+
+
+. Aggiornare le definizioni delle variabili nelle definizioni delle `svm_initial` richieste. È necessario modificare le seguenti definizioni di variabile:
++
+** `cluster_name`
+** `vserver_name`
+** `peer_cluster_name`
+** `peer_vserver`
++
+Per aggiornare le definizioni, rimuovere il simbolo * '{}'* dopo `req_details` per la `svm_initial` definizione e aggiungere la definizione corretta.
+
+
+
+. Creare un file nella `logic-tasks` cartella per la richiesta di servizio. Ad esempio, creare un file denominato `svm_initial.yml`.
++
+Copiare le seguenti righe nel file:
+
++
+[source, cli]
+----
+- name: Validate required inputs
+  ansible.builtin.assert:
+    that:
+    - service is defined
+
+- name: Include data files
+  ansible.builtin.include_vars:
+    file:   "{{ data_file_name }}.yml"
+  loop:
+  - common-site-stds
+  - user-inputs
+  - cluster-platform-stds
+  - vserver-common-stds
+  loop_control:
+    loop_var:    data_file_name
+
+- name: Initial SVM configuration
+  set_fact:
+    raw_service_request:
+----
+. Definire la `raw_service_request` variabile.
++
+È possibile utilizzare una delle seguenti opzioni per definire la `raw_service_request` variabile `svm_initial` nella `logic-tasks` cartella:
+
++
+** *Opzione 1*: Definire manualmente la `raw_service_request` variabile.
++
+Aprire il `tutorial-requests.yml` file utilizzando un editor e copiare il contenuto dalla riga 179 alla riga 222. Incollare il contenuto sotto la `raw service request` variabile nel nuovo `svm_initial.yml` file, come illustrato negli esempi seguenti:
+
++
+image::../media/svm_inital_line.png[Immagine della riga del file da cui copiare]
+
++
+.Mostra esempio
+[%collapsible]
+====
+File di esempio `svm_initial.yml`:
+
+[listing]
+----
+- name: Validate required inputs
+  ansible.builtin.assert:
+    that:
+    - service is defined
+
+- name: Include data files
+  ansible.builtin.include_vars:
+    file:   "{{ data_file_name }}.yml"
+  loop:
+  - common-site-stds
+  - user-inputs
+  - cluster-platform-stds
+  - vserver-common-stds
+  loop_control:
+    loop_var:    data_file_name
+
+- name: Initial SVM configuration
+  set_fact:
+    raw_service_request:
+     service:          svm_initial
+     operation:        create
+     std_name:         none
+     req_details:
+
+      ontap_vserver:
+      - hostname:                   "{{ cluster_name }}"
+        name:                       "{{ vserver_name }}"
+        root_volume_aggregate:      n01_aggr1
+
+      - hostname:                   "{{ peer_cluster_name }}"
+       name:                       "{{ peer_vserver }}"
+       root_volume_aggregate:      n01_aggr1
+
+      ontap_vserver_peer:
+      - hostname:                   "{{ cluster_name }}"
+        vserver:                    "{{ vserver_name }}"
+        peer_vserver:               "{{ peer_vserver }}"
+        applications:               snapmirror
+        peer_options:
+          hostname:                 "{{ peer_cluster_name }}"
+
+      ontap_interface:
+      - hostname:                   "{{ cluster_name }}"
+        vserver:                    "{{ vserver_name }}"
+        interface_name:             data01
+        role:                       data
+        address:                    10.0.0.200
+        netmask:                    255.255.255.0
+        home_node:                  "{{ cluster_name }}-01"
+        home_port:                  e0c
+        ipspace:                    Default
+        use_rest:                   never
+
+      - hostname:                   "{{ peer_cluster_name }}"
+        vserver:                    "{{ peer_vserver }}"
+        interface_name:             data01
+        role:                       data
+        address:                    10.0.0.201
+        netmask:                    255.255.255.0
+        home_node:                  "{{ peer_cluster_name }}-01"
+        home_port:                  e0c
+        ipspace:                    Default
+        use_rest:                   never
+----
+====
+** *Opzione 2*: Utilizzare un modello Jinja per definire la richiesta:
++
+È anche possibile utilizzare il seguente formato di modello Jinja per ottenere il `raw_service_request` valore.
+
++
+[listing]
+----
+raw_service_request: "{{ svm_initial }}"
+----
+
+
+. Eseguire la richiesta:
++
+[source, cli]
+----
+ansible-playbook -i inventory/hosts -e cluster_name=<Cluster_01> -e peer_cluster_name=<Cluster_02> -e peer_vserver=<SVM_02>  -e vserver_name=<SVM_01> site.yml
+----
+. Accedere a ciascuna istanza di ONTAP e convalidare la configurazione.
+. Aggiungere le interfacce della SVM.
++
+Definire il `ontap_interface` servizio in `svm_initial` nel `services.yml` file ed eseguire nuovamente la richiesta:
+
++
+[source, cli]
+----
+ansible-playbook -i inventory/hosts -e cluster_name=<Cluster_01> -e peer_cluster_name=<Cluster_02> -e peer_vserver=<SVM_02>  -e vserver_name=<SVM_01> site.yml
+----
+. Effettuare l'accesso a ciascuna istanza di ONTAP e verificare che le interfacce della SVM siano state configurate.
+
+
+
+
+== Fase 5: Se si desidera, definire una richiesta di servizio in modo dinamico
+
+Nei passi precedenti, la `raw_service_request` variabile è codificata. Ciò è utile per l'apprendimento, lo sviluppo e il test. È inoltre possibile generare dinamicamente una richiesta di servizio.
+
+La sezione seguente fornisce un'opzione per produrre dinamicamente il necessario `raw_service_request` se non si desidera integrarlo con sistemi di livello superiore.
+
+[IMPORTANT]
+====
+* Se la `logic_operation` variabile non è definita nel comando, il `logic.yml` file non importa alcun file dalla `logic-tasks` cartella. Ciò significa che i `raw_service_request` devono essere definiti all'esterno di Ansible e forniti al framework al momento dell'esecuzione.
+* Il nome del file di un'operazione nella `logic-tasks` cartella deve corrispondere al valore della `logic_operation` variabile senza estensione .yml.
+* I file di attività nella `logic-tasks` cartella definiscono dinamicamente un `raw_service_request`. l'unico requisito è che un valido `raw_service_request` sia definito come l'ultima attività nel file pertinente.
+
+
+====
+.Definizione dinamica di una richiesta di servizio
+Esistono diversi modi per applicare un'attività logica per definire dinamicamente una richiesta di servizio. Di seguito sono elencate alcune di queste opzioni:
+
+* Utilizzo di un file attività Ansible dalla `logic-tasks` cartella
+* Richiamo di un ruolo personalizzato che restituisce dati adatti alla conversione in un ruolo `raw_service_request` variabile.
+* Richiamo di un altro strumento all'esterno dell'ambiente Ansible per i dati richiesti. Ad esempio, una chiamata API REST a Active IQ Unified Manager.
+
+
+I seguenti comandi di esempio definiscono dinamicamente una richiesta di servizio per ogni cluster utilizzando il `tutorial-requests.yml` file:
+
+[source, cli]
+----
+ansible-playbook -i inventory/hosts -e cluster2provision=Cluster_01
+-e logic_operation=tutorial-requests site.yml
+----
+[source, cli]
+----
+ansible-playbook -i inventory/hosts -e cluster2provision=Cluster_02
+-e logic_operation=tutorial-requests site.yml
+----
+
+
+== Fase 6: Distribuire la soluzione ONTAP Day 0/1
+
+In questa fase, dovresti aver già completato quanto segue:
+
+* Revisionato e modificato tutti i file in in `playbooks/inventory/group_vars/all` base alle proprie esigenze. Ogni file contiene commenti dettagliati che consentono di apportare le modifiche.
+* Aggiunti tutti i file di attività richiesti alla `logic-tasks` directory.
+* Aggiunti tutti i file di dati necessari alla `playbook/vars` directory.
+
+
+Utilizzare i seguenti comandi per implementare la soluzione ONTAP Day 0/1 e verificare lo stato di salute della distribuzione:
+
+
+NOTE: In questa fase, il file dovrebbe essere già stato decrittografato e modificato `vault.yml` e deve essere crittografato con la nuova password.
+
+* Eseguire il servizio ONTAP Day 0:
++
+[source, cli]
+----
+ansible-playbook -i playbooks/inventory/hosts playbooks/site.yml -e logic_operation=cluster_day_0 -e service=cluster_day_0 -vvvv --ask-vault-pass <your_vault_password>
+----
+* Eseguire il servizio ONTAP Day 1:
++
+[source, cli]
+----
+ansible-playbook -i playbooks/inventory/hosts playbooks/site.yml -e logic_operation=cluster_day_1 -e service=cluster_day_0 -vvvv --ask-vault-pass <your_vault_password>
+----
+* Applicare le impostazioni a livello di cluster:
++
+[source, cli]
+----
+ansible-playbook -i playbooks/inventory/hosts playbooks/site.yml -e logic_operation=cluster_wide_settings -e service=cluster_wide_settings -vvvv --ask-vault-pass <your_vault_password>
+----
+* Eseguire i controlli dello stato di salute:
++
+[source, cli]
+----
+ansible-playbook -i playbooks/inventory/hosts playbooks/site.yml -e logic_operation=health_checks -e service=health_checks -e enable_health_reports=true -vvvv --ask-vault-pass <your_vault_password>
+----
+

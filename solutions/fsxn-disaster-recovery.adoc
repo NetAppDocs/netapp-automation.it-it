@@ -1,0 +1,266 @@
+---
+sidebar: sidebar 
+permalink: solutions/fsxn-disaster-recovery.html 
+keywords: bluexp automation catalog, netapp automation solutions, fsx for ontap, disaster recovery, backup 
+summary: Puoi usare questa soluzione di automazione per effettuare un backup di disaster recovery di un sistema di origine utilizzando Amazon FSX per NetApp ONTAP. 
+---
+= Amazon FSX per NetApp ONTAP - disaster recovery
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Puoi usare questa soluzione di automazione per effettuare un backup di disaster recovery di un sistema di origine utilizzando Amazon FSX per NetApp ONTAP.
+
+
+NOTE: Amazon FSX per NetApp ONTAP è anche chiamato *FSX per ONTAP*.
+
+.Informazioni sulla soluzione
+Ad un livello elevato, il codice di automazione fornito con questa soluzione esegue le seguenti azioni:
+
+* Esegui il provisioning di un file system FSX di destinazione per ONTAP
+* Eseguire il provisioning delle Storage Virtual Machine (SVM) per il file system
+* Creare una relazione di peering dei cluster tra i sistemi di origine e di destinazione
+* Creare una relazione di peering delle SVM tra il sistema di origine e il sistema di destinazione per SnapMirror
+* Creare volumi di destinazione
+* Crea una relazione SnapMirror tra i volumi di origine e destinazione
+* Avvia il trasferimento SnapMirror tra i volumi di origine e di destinazione
+
+
+L'automazione si basa su Docker e Docker Compose, che devono essere installati nella macchina virtuale Linux come descritto di seguito.
+
+.Prima di iniziare
+Per completare il provisioning e la configurazione, è necessario disporre dei seguenti elementi:
+
+* È necessario scaricare la https://console.bluexp.netapp.com/automationCatalog["Amazon FSX per NetApp ONTAP - disaster recovery"^] soluzione di automazione tramite l'interfaccia utente Web di BlueXP . La soluzione viene confezionata come `FSxN_DR.zip`. Questo file zip contiene il `AWS_FSxN_Bck_Prov.zip` file che verrà utilizzato per distribuire la soluzione descritta in questo documento.
+* Connettività di rete tra i sistemi di origine e di destinazione.
+* Una VM Linux con le seguenti caratteristiche:
++
+** Distribuzione Linux basata su Debian
+** Implementato sullo stesso sottoinsieme VPC utilizzato per FSX per il provisioning ONTAP
+
+
+* Un account AWS.
+
+
+
+
+== Fase 1: Installazione e configurazione di Docker
+
+Installare e configurare Docker in una macchina virtuale Linux basata su Debian.
+
+.Fasi
+. Preparare l'ambiente.
++
+[source, cli]
+----
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent softwareproperties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+----
+. Installare Docker e verificare l'installazione.
++
+[source, cli]
+----
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+docker --version
+----
+. Aggiungere il gruppo Linux richiesto con un utente associato.
++
+Controlla prima se il gruppo *docker* esiste nel tuo sistema Linux. Se non esiste, creare il gruppo e aggiungere l'utente. Per impostazione predefinita, l'utente della shell corrente viene aggiunto al gruppo.
+
++
+[source, cli]
+----
+sudo groupadd docker
+sudo usermod -aG docker $(whoami)
+----
+. Attivare le nuove definizioni di gruppo e utente
++
+Se è stato creato un nuovo gruppo con un utente, è necessario attivare le definizioni. Per fare questo, si può disconnettersi da Linux e poi tornare indietro. Oppure si può eseguire il seguente comando.
+
++
+[source, cli]
+----
+newgrp docker
+----
+
+
+
+
+== Fase 2: Installare Docker Compose
+
+Installare Docker Compose in una macchina virtuale Linux basata su Debian.
+
+.Fasi
+. Installazione di Docker Compose.
++
+[source, cli]
+----
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+----
+. Verificare che l'installazione sia riuscita.
++
+[source, cli]
+----
+docker-compose --version
+----
+
+
+
+
+== Fase 3: Preparare l'immagine Docker
+
+Occorre estrarre e caricare l'immagine Docker fornita con la soluzione di automazione.
+
+.Fasi
+. Copiare il file della soluzione `AWS_FSxN_Bck_Prov.zip` nella macchina virtuale in cui verrà eseguito il codice di automazione.
++
+[source, cli]
+----
+scp -i ~/<private-key.pem> -r AWS_FSxN_Bck_Prov.zip user@<IP_ADDRESS_OF_VM>
+----
++
+Il parametro di input `private-key.pem` è il file della chiave privata utilizzato per l'autenticazione della macchina virtuale AWS (istanza EC2).
+
+. Individuare la cartella corretta con il file della soluzione e decomprimere il file.
++
+[source, cli]
+----
+unzip AWS_FSxN_Bck_Prov.zip
+----
+. Passare alla nuova cartella `AWS_FSxN_Bck_Prov` creata con l'operazione di decompressione ed elencare i file. Dovrebbe essere visualizzato il file `aws_fsxn_bck_image_latest.tar.gz`.
++
+[source, cli]
+----
+ls -la
+----
+. Caricare il file di immagine Docker. L'operazione di carico dovrebbe normalmente essere completata in pochi secondi.
++
+[source, cli]
+----
+docker load -i aws_fsxn_bck_image_latest.tar.gz
+----
+. Verificare che l'immagine Docker sia caricata.
++
+[source, cli]
+----
+docker images
+----
++
+Si dovrebbe vedere l'immagine Docker `aws_fsxn_bck_image` con il tag `latest`.
+
++
+[listing]
+----
+   REPOSITORY        TAG     IMAGE ID      CREATED      SIZE
+aws_fsxn_bck_image  latest  da87d4974306  2 weeks ago  1.19GB
+----
+
+
+
+
+== Fase 4: Creare il file dell'ambiente per le credenziali AWS
+
+È necessario creare un file variabile locale per l'autenticazione utilizzando la chiave di accesso e segreta. Quindi aggiungere il file al `.env` file.
+
+.Fasi
+. Creare il `awsauth.env` file nella seguente posizione:
++
+`path/to/env-file/awsauth.env`
+
+. Aggiungere il seguente contenuto al file:
++
+[listing]
+----
+access_key=<>
+secret_key=<>
+----
++
+Il formato *deve* essere esattamente come mostrato sopra senza spazi tra `key` e `value`.
+
+. Aggiungere il percorso assoluto del `.env` file utilizzando la `AWS_CREDS` variabile. Ad esempio:
++
+`AWS_CREDS=path/to/env-file/awsauth.env`
+
+
+
+
+
+== Passaggio 5: Creare un volume esterno
+
+È necessario un volume esterno per verificare che i file di stato di Terraform e altri file importanti siano persistenti. Questi file devono essere disponibili affinché Terraform possa eseguire il flusso di lavoro e le distribuzioni.
+
+.Fasi
+. Creare un volume esterno all'esterno di Docker Compose.
++
+Assicurarsi di aggiornare il nome del volume (ultimo parametro) al valore appropriato prima di eseguire il comando.
+
++
+[source, cli]
+----
+docker volume create aws_fsxn_volume
+----
+. Aggiungere il percorso del volume esterno al `.env` file di ambiente utilizzando il comando:
++
+`PERSISTENT_VOL=path/to/external/volume:/volume_name`
+
++
+Ricordare di mantenere il contenuto del file esistente e la formattazione dei due punti. Ad esempio:
+
++
+[source, cli]
+----
+PERSISTENT_VOL=aws_fsxn_volume:/aws_fsxn_bck
+----
++
+Puoi invece aggiungere una condivisione NFS come volume esterno utilizzando un comando come:
+
++
+`PERSISTENT_VOL=nfs/mnt/document:/aws_fsx_bck`
+
+. Aggiornare le variabili Terraform.
++
+.. Passare alla cartella `aws_fsxn_variables`.
+.. Verificare che esistano i due file seguenti: `terraform.tfvars` E `variables.tf`.
+.. Aggiornare i valori in `terraform.tfvars` come richiesto per il proprio ambiente.
++
+Per ulteriori informazioni, vedere https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/fsx_ontap_file_system["Risorsa terraform: aws_fsx_ONTAP_file_system"^] .
+
+
+
+
+
+
+
+== Fase 6: Distribuzione della soluzione di backup
+
+Puoi implementare e effettuare il provisioning della soluzione di backup per il disaster recovery.
+
+.Fasi
+. Accedere alla cartella principale (AWS_FSxN_Bck_Prov) ed eseguire il comando di provisioning.
++
+[source, cli]
+----
+docker-compose up -d
+----
++
+Questo comando crea tre contenitori. Il primo container implementa FSX per ONTAP. Il secondo container crea il peering del cluster, il peering delle SVM e il volume di destinazione. Il terzo contenitore crea la relazione SnapMirror e avvia il trasferimento SnapMirror.
+
+. Monitorare il processo di provisioning.
++
+[source, cli]
+----
+docker-compose logs -f
+----
++
+Questo comando fornisce l'output in tempo reale, ma è stato configurato per acquisire i log attraverso il file `deployment.log`. È possibile modificare il nome di questi file di registro modificando il `.env` file e aggiornando le variabili `DEPLOYMENT_LOGS`.
+
+

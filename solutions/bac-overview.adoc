@@ -1,0 +1,24 @@
+---
+sidebar: sidebar 
+permalink: solutions/bac-overview.html 
+keywords: bluexp automation catalog, automation catalog, overview, introduction 
+summary: Il catalogo di automazione BlueXP  è una raccolta di soluzioni di automazione disponibili per clienti, partner e dipendenti di NetApp. Il catalogo ha diverse caratteristiche e vantaggi. 
+---
+= Panoramica del catalogo di automazione BlueXP 
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Il catalogo di automazione BlueXP  è una raccolta di soluzioni di automazione disponibili per clienti, partner e dipendenti di NetApp. Il catalogo ha diverse caratteristiche e vantaggi.
+
+Un'unica posizione per le tue esigenze di automazione:: È possibile accedere a https://console.bluexp.netapp.com/automationCatalog["Catalogo di automazione BlueXP"^] tramite l'interfaccia utente Web di BlueXP . In questo modo è possibile trovare un'unica posizione per gli script, i playbook e i moduli necessari per migliorare l'automazione e il funzionamento dei prodotti e dei servizi NetApp.
+Le soluzioni vengono create e testate da NetApp:: Tutte le soluzioni di automazione e gli script sono stati creati e testati da NetApp. Ogni soluzione è rivolta a casi d'utilizzo o richieste specifici del cliente. La maggior parte si concentra sull'integrazione con i servizi file e dati NetApp.
+Documentazione:: Ciascuna soluzione di automazione include la documentazione associata per iniziare. Sebbene sia possibile accedere alle soluzioni tramite l'interfaccia Web di BlueXP , tutta la documentazione è disponibile in questo sito. La documentazione è organizzata in base ai prodotti e ai servizi cloud di NetApp.
+Solide fondamenta per il futuro:: NetApp si impegna ad aiutare i nostri clienti a migliorare e ottimizzare l'automazione dei data center e degli ambienti cloud. Prevediamo di continuare a migliorare il catalogo di automazione BlueXP  per soddisfare le esigenze dei clienti, le modifiche tecnologiche e la continua integrazione dei prodotti.
+Vogliamo conoscere la tua opinione:: Il team di automazione dell'ufficio Customer Experience Office (CXO) di NetApp vorrebbe ricevere una tua opinione. In caso di feedback, problemi o richieste di funzionalità, invia un'e-mail a mailto:ng-cxo-Automation-Admins@NetApp.com[team di automazione cxo].
+

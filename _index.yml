@@ -1,0 +1,37 @@
+---
+indexpage:
+  title: Automazione NetApp
+  summary: NetApp fornisce accesso ad API programmatiche per molti dei nostri prodotti,
+    nonché a soluzioni di automazione basate su script che possono aiutarti ad automatizzare
+    i carichi di lavoro per il portfolio di prodotti e servizi NetApp.
+  keywords: automation, netapp automation
+  lead: NetApp fornisce accesso ad API programmatiche per molti dei nostri prodotti,
+    nonché a soluzioni di automazione basate su script che possono aiutarti ad automatizzare
+    i carichi di lavoro per il portfolio di prodotti e servizi NetApp.
+  tiles:
+  - title: Inizia subito
+    links:
+    - title: Novità
+      url: "/about/whats-new.html"
+    - title: Catalogo di automazione BlueXP
+      url: "/solutions/bac-overview.html"
+    - title: Risorse aggiuntive
+      url: "/support/additional-resources.html"
+  - title: Soluzioni evidenziate
+    links:
+    - title: Oracle con Azure NetApp Files
+      url: "/solutions/anf-oracle.html"
+    - title: Amazon FSX per ONTAP - disaster recovery
+      url: "/solutions/fsxn-disaster-recovery.html"
+    - title: Implementazione di ONTAP dal giorno 0/1
+      url: "/solutions/ontap-day01-overview.html"
+  - title: API dei prodotti NetApp
+    links:
+    - title: ONTAP
+      url: "/api/ontap.html"
+    - title: BlueXP
+      url: "/api/bluexp.html"
+    - title: Controllo Astra
+      url: "/api/astra.html"
+    - title: Active IQ Unified Manager
+      url: "/api/aiqum.html"
