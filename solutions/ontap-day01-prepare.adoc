@@ -66,7 +66,7 @@ NOTE: Se si utilizza un sistema operativo Mac OS, è necessario disporre di un p
 .Fasi
 Per installare due simulatori ONTAP nell'ambiente locale, attenersi alla procedura seguente:
 
-. Scaricare simulate ONTAP dal link:https://mysupport.netapp.com/site/tools/tool-eula/simulate-ontap["Sito di supporto NetApp"^].
+. Scaricare simulate ONTAP dal link:https://mysupport.netapp.com/site/tools/tool-eula/ontap-simulate["Sito di supporto NetApp"^].
 +
 
 NOTE: Anche se si installano due simulatori ONTAP, è sufficiente scaricare una sola copia del software.
