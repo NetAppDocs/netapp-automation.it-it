@@ -17,7 +17,7 @@ summary: 'NetApp ONTAP è il software per la gestione dei dati leader del settor
 NetApp ONTAP è il software per la gestione dei dati leader del settore per implementazioni cloud e on-premise. ONTAP include un'unica API REST comune che continua a essere espansa e migliorata con ogni release. Consulta la documentazione e le risorse correlate fornite di seguito per iniziare con l'automazione delle implementazioni di ONTAP utilizzando l'API REST ONTAP.
 
 .API REST di ONTAP
-Puoi utilizzare l'API REST per automatizzare l'amministrazione delle implementazioni ONTAP.
+È possibile utilizzare l'API REST per automatizzare l'amministrazione delle distribuzioni ONTAP .
 
 * https://docs.netapp.com/us-en/ontap-automation/["Documentazione sull'automazione ONTAP"^]
 
