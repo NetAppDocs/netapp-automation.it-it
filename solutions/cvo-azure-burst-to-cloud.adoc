@@ -1,7 +1,7 @@
 ---
 sidebar: sidebar 
 permalink: solutions/cvo-azure-burst-to-cloud.html 
-keywords: bluexp automation catalog, netapp automation solutions, azure, cloud volumes ontap, burst to cloud 
+keywords: bluexp automation catalog, netapp automation solutions, azure, cloud volumes ontap, burst to cloud. netapp, console 
 summary: Puoi utilizzare questa soluzione di automazione per implementare Cloud Volumes ONTAP per Azure utilizzando Terraform. 
 ---
 = Cloud Volumes ONTAP per Azure - burst nel cloud
@@ -14,12 +14,12 @@ summary: Puoi utilizzare questa soluzione di automazione per implementare Cloud 
 
 
 [role="lead"]
-Questo articolo supporta la soluzione di automazione NetApp Cloud Volumes ONTAP per Azure, disponibile per i clienti NetApp nel catalogo di automazione BlueXP .
+Questo articolo supporta la soluzione NetApp Cloud Volumes ONTAP per Azure Automation, disponibile per i clienti NetApp nel catalogo di automazione della console NetApp .
 
 La soluzione di automazione Cloud Volumes ONTAP per Azure automatizza l'implementazione containerizzata di Cloud Volumes ONTAP per Azure utilizzando Terraform, consentendoti di implementare Cloud Volumes ONTAP per Azure rapidamente, senza interventi manuali.
 
 .Prima di iniziare
-* È necessario scaricare la link:https://console.bluexp.netapp.com/automationCatalog["Cloud Volumes ONTAP, Azure - burst nel cloud"^]soluzione di automazione tramite l'interfaccia utente Web di BlueXP . La soluzione viene confezionata come `CVO-Azure-Burst-To-Cloud.zip`.
+* Devi scaricare illink:https://console.netapp.com/automationCatalog["Cloud Volumes ONTAP, Azure - burst nel cloud"^] soluzione di automazione tramite l'interfaccia utente web della console.  La soluzione è confezionata come `CVO-Azure-Burst-To-Cloud.zip` .
 * È necessario installare una macchina virtuale Linux sulla stessa rete di Cloud Volumes ONTAP.
 * Dopo aver installato la VM Linux, è necessario seguire la procedura descritta in questa soluzione per installare le dipendenze richieste.
 
@@ -179,7 +179,7 @@ cvo_azure_flexcache_ubuntu_image latest 18db15a4d59c 2 weeks ago 1.14GB
 
 == Passaggio 3: Creare file di variabili d'ambiente
 
-A questo punto, è necessario creare due file di variabili d'ambiente. Un file è per l'autenticazione delle API di Azure Resource Manager utilizzando le credenziali principali del servizio. Il secondo file serve per impostare le variabili di ambiente in modo da consentire ai moduli BlueXP  Terraform di individuare e autenticare le API di Azure.
+In questa fase è necessario creare due file di variabili di ambiente.  Un file è destinato all'autenticazione delle API di Azure Resource Manager tramite credenziali dell'entità servizio.  Il secondo file serve per impostare le variabili di ambiente per consentire ai moduli Terraform della console di individuare e autenticare le API di Azure.
 
 .Fasi
 . Creare un'identità di servizio.
@@ -255,24 +255,24 @@ Immettere il percorso assoluto del `credentials.env` file di ambiente nel `.env`
 
 
 
-== Passaggio 4: Aggiungere licenze Cloud Volumes ONTAP a BlueXP  o sottoscrivere BlueXP 
+== Passaggio 4: iscriviti a NetApp Intelligent Services
 
-Puoi aggiungere licenze Cloud Volumes ONTAP a BlueXP  o iscriverti a NetApp BlueXP  in Azure Marketplace.
+Iscriviti a NetApp Intelligent Services tramite il tuo provider cloud per pagare a ore (PAYGO) o tramite un contratto annuale. I servizi intelligenti NetApp includono NetApp Backup and Recovery, Cloud Volumes ONTAP, NetApp Cloud Tiering, NetApp Ransomware Resilience e NetApp Disaster Recovery. NetApp Data Classification è incluso nel tuo abbonamento senza costi aggiuntivi
 
 .Fasi
-. Dal portale Azure, accedere a *SaaS* e selezionare *Iscriviti a NetApp BlueXP *.
+. Dal portale di Azure, vai su *SaaS* e seleziona *Iscriviti a NetApp Intelligent Services*.
 . Selezionare il piano *Cloud Manager (di Cap PYGO per ora, WORM e servizi dati)*.
 +
 È possibile utilizzare lo stesso gruppo di risorse di Cloud Volumes ONTAP o un gruppo di risorse diverso.
 
-. Configurare il portale BlueXP  per importare l'abbonamento SaaS in BlueXP .
+. Configurare il portale della Console per importare l'abbonamento SaaS nella Console.
 +
 È possibile configurare questa configurazione direttamente dal portale Azure accedendo a *Dettagli prodotto e piano* e selezionando l'opzione *Configura account ora*.
 
 +
-Viene quindi eseguito il reindirizzamento al portale BlueXP  per confermare la configurazione.
+Verrai quindi reindirizzato al portale della Console per confermare la configurazione.
 
-. Confermare la configurazione nel portale BlueXP  selezionando *Salva*.
+. Confermare la configurazione nel portale della Console selezionando *Salva*.
 
 
 
@@ -344,7 +344,7 @@ Nella cartella dovrebbero essere visualizzati i seguenti file variabili:
 È necessario leggere la documentazione di supporto specifica quando si modifica uno dei valori delle variabili nel `terraform.tfvars` file. I valori possono variare in base a regione, zone di disponibilità e altri fattori supportati da Cloud Volumes ONTAP per Azure. Ciò comprende licenze, dimensioni del disco e dimensioni delle macchine virtuali per nodi singoli e coppie ha.
 
 +
-Tutte le variabili di supporto per i moduli Connector e Cloud Volumes ONTAP Terraform sono già definite nel `variables.tf` file. È necessario fare riferimento ai nomi delle variabili nel `variables.tf` file prima di aggiungerlo al `terraform.tfvars` file.
+Tutte le variabili di supporto per l'agente Console e i moduli Terraform Cloud Volumes ONTAP sono già definite in `variables.tf` file.  È necessario fare riferimento ai nomi delle variabili in `variables.tf` file prima di aggiungerlo al `terraform.tfvars` file.
 
 . A seconda delle proprie esigenze, è possibile attivare o disattivare FlexCache e FlexClone impostando le seguenti opzioni su `true` o `false`.
 +

@@ -1,10 +1,10 @@
 ---
 sidebar: sidebar 
 permalink: solutions/fsxn-burst-to-cloud.html 
-keywords: bluexp automation catalog, netapp automation solutions, fsx for ontap, burst to cloud 
-summary: Puoi usare questa soluzione di automazione per eseguire il provisioning di Amazon FSX per NetApp ONTAP con dei volumi e di un FlexCache associato. 
+keywords: bluexp automation catalog, netapp automation solutions, fsx for ontap, burst to cloud, netapp console 
+summary: È possibile utilizzare questa soluzione di automazione per eseguire il provisioning Amazon FSx for NetApp ONTAP con volumi e un FlexCache associato. 
 ---
-= Amazon FSX per NetApp ONTAP - burst nel cloud
+= Gestione Amazon FSx for NetApp ONTAP - Burst to cloud
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,10 +14,10 @@ summary: Puoi usare questa soluzione di automazione per eseguire il provisioning
 
 
 [role="lead"]
-Puoi usare questa soluzione di automazione per eseguire il provisioning di Amazon FSX per NetApp ONTAP con dei volumi e di un FlexCache associato.
+È possibile utilizzare questa soluzione di automazione per eseguire il provisioning Amazon FSx for NetApp ONTAP con volumi e un FlexCache associato.
 
 
-NOTE: Amazon FSX per NetApp ONTAP è anche chiamato *FSX per ONTAP*.
+NOTE: La gestione Amazon FSx for NetApp ONTAP è anche denominata *FSx per ONTAP*.
 
 .Informazioni sulla soluzione
 Ad un livello elevato, il codice di automazione fornito con questa soluzione esegue le seguenti azioni:
@@ -35,7 +35,7 @@ L'automazione si basa su Docker e Docker Compose, che devono essere installati n
 .Prima di iniziare
 Per completare il provisioning e la configurazione, è necessario disporre dei seguenti elementi:
 
-* È necessario scaricare la https://console.bluexp.netapp.com/automationCatalog["Amazon FSX per NetApp ONTAP - burst nel cloud"^] soluzione di automazione tramite l'interfaccia utente Web di BlueXP . La soluzione viene predisposta come file `AWS_FSxN_BTC.zip`.
+* Devi scaricare il https://console.netapp.com/automationCatalog["Gestione Amazon FSx for NetApp ONTAP - Burst to cloud"^] soluzione di automazione tramite l'interfaccia utente web della console NetApp .  La soluzione è confezionata come file `AWS_FSxN_BTC.zip` .
 * Connettività di rete tra i sistemi di origine e di destinazione.
 * Una VM Linux con le seguenti caratteristiche:
 +
@@ -239,9 +239,9 @@ Per ulteriori informazioni, vedere https://registry.terraform.io/providers/hashi
 
 
 
-== Fase 6: Eseguire il provisioning di Amazon FSX per NetApp ONTAP e FlexCache
+== Fase 6: provisioning Amazon FSx for NetApp ONTAP e FlexCache
 
-È possibile eseguire il provisioning di Amazon FSX per NetApp ONTAP e FlexCache.
+È possibile effettuare il provisioning Amazon FSx for NetApp ONTAP e FlexCache.
 
 .Fasi
 . Accedere alla cartella principale (AWS_FSXN_BTC) ed eseguire il comando di provisioning.
@@ -266,9 +266,9 @@ Questo comando fornisce l'output in tempo reale, ma è stato configurato per acq
 
 
 
-== Passaggio 7: Distruggi Amazon FSX per NetApp ONTAP e FlexCache
+== Passaggio 7: distruggere Amazon FSx for NetApp ONTAP e FlexCache
 
-Facoltativamente, puoi eliminare e rimuovere Amazon FSX per NetApp ONTAP e FlexCache.
+Facoltativamente, è possibile eliminare e rimuovere Amazon FSx for NetApp ONTAP e FlexCache.
 
 . Impostare la variabile `flexcache_operation` nel `terraform.tfvars` file su "Destroy".
 . Accedere alla cartella principale (AWS_FSXN_BTC) ed eseguire il seguente comando.

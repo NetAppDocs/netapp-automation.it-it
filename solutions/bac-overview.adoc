@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: solutions/bac-overview.html 
 keywords: bluexp automation catalog, automation catalog, overview, introduction 
-summary: Il catalogo di automazione BlueXP  è una raccolta di soluzioni di automazione disponibili per clienti, partner e dipendenti di NetApp. Il catalogo ha diverse caratteristiche e vantaggi. 
+summary: Il catalogo di automazione della console NetApp è una raccolta di soluzioni di automazione disponibili per clienti, partner e dipendenti NetApp .  Il catalogo presenta numerose caratteristiche e vantaggi. 
 ---
-= Panoramica del catalogo di automazione BlueXP 
+= Panoramica del catalogo di automazione della console NetApp
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,11 +14,11 @@ summary: Il catalogo di automazione BlueXP  è una raccolta di soluzioni di aut
 
 
 [role="lead"]
-Il catalogo di automazione BlueXP  è una raccolta di soluzioni di automazione disponibili per clienti, partner e dipendenti di NetApp. Il catalogo ha diverse caratteristiche e vantaggi.
+Il catalogo di automazione della console NetApp è una raccolta di soluzioni di automazione disponibili per clienti, partner e dipendenti NetApp .  Il catalogo presenta numerose caratteristiche e vantaggi.
 
-Un'unica posizione per le tue esigenze di automazione:: È possibile accedere a https://console.bluexp.netapp.com/automationCatalog["Catalogo di automazione BlueXP"^] tramite l'interfaccia utente Web di BlueXP . In questo modo è possibile trovare un'unica posizione per gli script, i playbook e i moduli necessari per migliorare l'automazione e il funzionamento dei prodotti e dei servizi NetApp.
+Un'unica posizione per le tue esigenze di automazione:: Puoi accedere al https://console.netapp.com/automationCatalog["Catalogo di automazione della console NetApp"^] tramite l'interfaccia utente web della Console.  In questo modo è possibile trovare in un'unica posizione gli script, i playbook e i moduli necessari per migliorare l'automazione e il funzionamento dei prodotti e dei servizi NetApp .
 Le soluzioni vengono create e testate da NetApp:: Tutte le soluzioni di automazione e gli script sono stati creati e testati da NetApp. Ogni soluzione è rivolta a casi d'utilizzo o richieste specifici del cliente. La maggior parte si concentra sull'integrazione con i servizi file e dati NetApp.
-Documentazione:: Ciascuna soluzione di automazione include la documentazione associata per iniziare. Sebbene sia possibile accedere alle soluzioni tramite l'interfaccia Web di BlueXP , tutta la documentazione è disponibile in questo sito. La documentazione è organizzata in base ai prodotti e ai servizi cloud di NetApp.
-Solide fondamenta per il futuro:: NetApp si impegna ad aiutare i nostri clienti a migliorare e ottimizzare l'automazione dei data center e degli ambienti cloud. Prevediamo di continuare a migliorare il catalogo di automazione BlueXP  per soddisfare le esigenze dei clienti, le modifiche tecnologiche e la continua integrazione dei prodotti.
+Documentazione:: Ciascuna delle soluzioni di automazione include la relativa documentazione per aiutarti a iniziare.  Sebbene le soluzioni siano accessibili tramite l'interfaccia web della Console, tutta la documentazione è disponibile su questo sito.  La documentazione è organizzata in base ai prodotti NetApp e ai servizi cloud.
+Solide fondamenta per il futuro:: NetApp si impegna ad aiutare i propri clienti a migliorare e semplificare l'automazione dei loro data center e ambienti cloud.  Prevediamo di continuare a migliorare il catalogo di automazione della console per soddisfare le esigenze dei clienti, i cambiamenti tecnologici e la continua integrazione dei prodotti.
 Vogliamo conoscere la tua opinione:: Il team di automazione dell'ufficio Customer Experience Office (CXO) di NetApp vorrebbe ricevere una tua opinione. In caso di feedback, problemi o richieste di funzionalità, invia un'e-mail a mailto:ng-cxo-Automation-Admins@NetApp.com[team di automazione cxo].
 

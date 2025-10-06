@@ -32,9 +32,9 @@ Articoli di blog e altre risorse per supportare sviluppatori e amministratori.
 
 
 
-== Risorse cloud di NetApp
+== Risorse della console NetApp
 
-* https://bluexp.netapp.com/["NetApp BlueXP"^]
+* https://console.netapp.com/["Console NetApp"^]
 +
 Sito centrale per le soluzioni cloud di NetApp.
 

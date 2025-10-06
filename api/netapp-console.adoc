@@ -1,0 +1,29 @@
+---
+sidebar: sidebar 
+permalink: api/netapp-console.html 
+keywords: netapp products, product api, rest, rest api, bluexp, bluexp control plane, netapp, console 
+summary: 'NetApp Console è un piano di controllo unificato che fornisce una piattaforma multi-cloud ibrida per la gestione di servizi di storage e dati sia in ambienti on-premise che in ambienti cloud pubblici. È composto da diversi servizi o componenti distinti, ognuno dei quali espone un"API REST associata.  Per iniziare ad automatizzare il tuo ambiente nella Console utilizzando le API REST della Console, consulta la documentazione e le risorse correlate fornite di seguito.' 
+---
+= Piano di controllo della console NetApp
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+NetApp Console è un piano di controllo unificato che fornisce una piattaforma multi-cloud ibrida per la gestione di servizi di storage e dati sia in ambienti on-premise che in ambienti cloud pubblici. È composto da diversi servizi o componenti distinti, ognuno dei quali espone un'API REST associata.  Per iniziare ad automatizzare il tuo ambiente nella Console utilizzando le API REST della Console, consulta la documentazione e le risorse correlate fornite di seguito.
+
+.API REST della console NetApp
+È possibile utilizzare le varie API REST per automatizzare l'amministrazione dei servizi di archiviazione e dati gestiti dalla Console.
+
+* https://docs.netapp.com/us-en/console-automation/["Documentazione API della console NetApp"^]
+
+
+.Famiglia di console NetApp
+La documentazione della famiglia Console include tutto il necessario per iniziare a utilizzare il piano di controllo della Console.
+
+* https://docs.netapp.com/us-en/console-family/["Documentazione della console NetApp"^]
+

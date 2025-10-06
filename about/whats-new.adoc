@@ -30,13 +30,13 @@ Il supporto per Cloud Volumes ONTAP è organizzato dall'ambiente di cloud pubbli
 
 == 04 giugno 2023
 
-NetApp https://console.bluexp.netapp.com/automationCatalog["Catalogo di automazione BlueXP"^] è disponibile tramite l'interfaccia utente Web di BlueXP . Il catalogo di automazione fornisce accesso alle soluzioni che possono aiutarti con l'implementazione e l'integrazione automatizzate dei prodotti NetApp. La documentazione per queste soluzioni è organizzata in diverse aree funzionali o di prodotto, come descritto di seguito.
+IL https://console.netapp.com/automationCatalog["Catalogo di automazione della console NetApp"^] è disponibile tramite l'interfaccia utente web della Console.  Il catalogo di automazione fornisce accesso a soluzioni che possono aiutarti con l'implementazione e l'integrazione automatizzate dei prodotti NetApp .  La documentazione per queste soluzioni è organizzata in diverse aree di prodotto o funzionali, come descritto di seguito.
 
-.Amazon FSX per NetApp ONTAP
-Due soluzioni Amazon FSX per NetApp ONTAP vengono fornite come segue:
+.Gestione Amazon FSx for NetApp ONTAP
+Di seguito vengono fornite due soluzioni di gestione Amazon FSx for NetApp ONTAP :
 
-* link:../solutions/fsxn-burst-to-cloud.html["Amazon FSX per NetApp ONTAP - burst nel cloud"]
-* link:../solutions/fsxn-disaster-recovery.html["Amazon FSX per NetApp ONTAP - disaster recovery"]
+* link:../solutions/fsxn-burst-to-cloud.html["Gestione Amazon FSx for NetApp ONTAP - Burst to cloud"]
+* link:../solutions/fsxn-disaster-recovery.html["Gestione di Amazon FSx for NetApp ONTAP - Ripristino di emergenza"]
 
 
 .Azure NetApp Files
